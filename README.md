@@ -35,3 +35,8 @@ Just send me an ask if you really want to try, http://neurovertex.tumblr.com/ask
      -t,--tags <tags>              Comma-separated list of tags to track
 
 For now I'm not certain anyone cares so if someone does I'll write more doc, otherwise
+
+Dependencies
+============
+
+This software uses Tumblr's official Java API [Jumblr](https://github.com/tumblr/jumblr) and [Apache Common CLI](http://commons.apache.org/proper/commons-cli/)
