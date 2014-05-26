@@ -10,10 +10,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -65,6 +62,12 @@ public class Main {
 
 					for (String tag : settings.get("tags").split(",")) {
 						List<Post> postList = client.tagged(tag, options);
+						Collections.sort(postList, new Comparator<Post>() {
+							@Override
+							public int compare(Post o1, Post o2) {
+								return o2.getTimestamp().compareTo(o1.getTimestamp()); // Inverted to get most recent first
+							}
+						});
 						for (Post post : postList)
 							if (posts.put(post.getId(), post) == null) // If the post wasn't in the map yet
 								rss.addItem(tag, post);
