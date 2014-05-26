@@ -17,6 +17,7 @@ import java.util.*;
  * User: Jeremie
  * Date: 02/05/2014
  * Time: 20:06
+ * @version 0.1 build 1405262107
  */
 public class Main {
 	public static void main(String[] args) throws IOException, TransformerException, ParserConfigurationException {
@@ -28,6 +29,7 @@ public class Main {
 		cliOpts.addOption("s", "save-settings", false, "Save settings after including command-line parameters.");
 		cliOpts.addOption("c", "clear-settings", false, "Doesn't load the settings from the file");
 		cliOpts.addOption("o", "output", true, "Output file, default is - (= console output)");
+		cliOpts.addOption("version", true, "Display version, implies -n");
 
 		cliOpts.addOption("ck", "consumer-key", true, "The consumer key");
 		cliOpts.addOption("cs", "consumer-secret", true, "The consumer secret");
@@ -58,21 +60,16 @@ public class Main {
 					Map<String, String> options = new HashMap<>();
 					options.put("filter", "text");
 
-					Map<Long, Post> posts = new TreeMap<>(); // Avoiding duplicates in case a post has multiple tracked tags
+					Map<Long, Map.Entry<String, Post>> posts = new TreeMap<>(Collections.reverseOrder()); // Avoiding duplicates in case a post has multiple tracked tags
 
 					for (String tag : settings.get("tags").split(",")) {
 						List<Post> postList = client.tagged(tag, options);
-						Collections.sort(postList, new Comparator<Post>() {
-							@Override
-							public int compare(Post o1, Post o2) {
-								return o2.getTimestamp().compareTo(o1.getTimestamp()); // Inverted to get most recent first
-							}
-						});
 						for (Post post : postList)
-							if (posts.put(post.getId(), post) == null) // If the post wasn't in the map yet
-								rss.addItem(tag, post);
+							posts.put(post.getId(), new AbstractMap.SimpleEntry<>(tag, post));
 					}
 
+					for (Map.Entry<String,Post> entry : posts.values())
+						rss.addItem(entry.getKey(), entry.getValue());
 
 					PrintStream out = settings.get("output").equals("-") ? System.out : new PrintStream(settings.get("output"));
 					rss.write(out);
@@ -92,6 +89,10 @@ public class Main {
 	public static Settings parseCLI(CommandLine cli) throws IOException, ParseException {
 		if (cli.hasOption("help"))
 			throw new ParseException("help");
+
+		if (cli.hasOption("version")) {
+			System.out.println("Version : 0.1 build 1405262107");
+		}
 
 		String[] args = cli.getArgs();
 		String configFile = "config.json";
