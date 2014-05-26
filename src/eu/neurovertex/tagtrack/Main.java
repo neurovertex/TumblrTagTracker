@@ -29,7 +29,7 @@ public class Main {
 		cliOpts.addOption("s", "save-settings", false, "Save settings after including command-line parameters.");
 		cliOpts.addOption("c", "clear-settings", false, "Doesn't load the settings from the file");
 		cliOpts.addOption("o", "output", true, "Output file, default is - (= console output)");
-		cliOpts.addOption("version", true, "Display version, implies -n");
+		cliOpts.addOption("v", "version", false, "Display version, implies -n");
 
 		cliOpts.addOption("ck", "consumer-key", true, "The consumer key");
 		cliOpts.addOption("cs", "consumer-secret", true, "The consumer secret");
